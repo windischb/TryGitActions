@@ -28,4 +28,7 @@ jobs:
       run: dotnet build './build' /nodeReuse:false --configuration Release --framework netcoreapp2.0
 
     - name: Build Program
-      run: ./build.sh
+      run: dotnet run --project build --target Compile
+      env:
+        # Work around https://github.com/actions/setup-dotnet/issues/29
+        DOTNET_ROOT: /opt/hostedtoolcache/dncs/2.2.401/x64
