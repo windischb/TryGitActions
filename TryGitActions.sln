@@ -5,12 +5,16 @@ VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TryGitActions.Cmd", "TryGitActions.Cmd\TryGitActions.Cmd.csproj", "{F8C3AB7B-5F71-42C0-94E9-FD0444AA7657}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{42CC89DC-811B-451D-88D5-1DD8036BF697}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42CC89DC-811B-451D-88D5-1DD8036BF697}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42CC89DC-811B-451D-88D5-1DD8036BF697}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8C3AB7B-5F71-42C0-94E9-FD0444AA7657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8C3AB7B-5F71-42C0-94E9-FD0444AA7657}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8C3AB7B-5F71-42C0-94E9-FD0444AA7657}.Release|Any CPU.ActiveCfg = Release|Any CPU
