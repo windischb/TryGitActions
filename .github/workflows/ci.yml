@@ -20,6 +20,9 @@ jobs:
     
     - name: Prepare Tools
       run: dotnet tool install --global GitVersion.Tool
+    
+    - name: Check Version
+      run: dotnet gitversion
 
     - name: Build Program
       run: dotnet build TryGitActions.Cmd -c Release -o output
