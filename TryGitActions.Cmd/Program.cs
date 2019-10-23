@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace TryGitActions.Cmd
 {
@@ -6,7 +7,8 @@ namespace TryGitActions.Cmd
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine($"Current Version Number: {typeof(Program).Assembly.GetName().Version}");
+            
         }
     }
 }
