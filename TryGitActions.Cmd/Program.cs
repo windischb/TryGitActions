@@ -8,7 +8,6 @@ namespace TryGitActions.Cmd
         static void Main(string[] args)
         {
             Console.WriteLine($"Current Version Number: '{typeof(Program).Assembly.GetName().Version}'");
-            
         }
     }
 }
