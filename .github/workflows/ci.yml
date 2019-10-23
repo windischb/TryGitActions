@@ -14,12 +14,12 @@ jobs:
     - uses: actions/checkout@master
 
     - name: Setup .NET Core 2.2.401
-      uses: actions/setup-dotnet@master
+      uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '2.2.401'
 
     - name: Setup .NET Core 3.0.100
-      uses: actions/setup-dotnet@master
+      uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '3.0.100'
 
