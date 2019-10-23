@@ -55,6 +55,7 @@ class Build : NukeBuild
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
+                .SetFramework("netcoreapp3.0")
                 .SetAssemblyVersion(GitVersion.GetNormalizedAssemblyVersion())
                 .SetFileVersion(GitVersion.GetNormalizedFileVersion())
                 .SetInformationalVersion(GitVersion.InformationalVersion)
