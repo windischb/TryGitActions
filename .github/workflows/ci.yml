@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v1
 
     - name: Setup .NET Core 2.2.401
       uses: actions/setup-dotnet@v1
@@ -28,4 +28,4 @@ jobs:
       run: dotnet build './build' /nodeReuse:false --configuration Release --framework netcoreapp2.0
 
     - name: Build Program
-      run: dotnet run --project build --target Compile
+      run: build.sh
