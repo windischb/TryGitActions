@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@master
       with:
-        dotnet-version: 3.0
+        dotnet-version: '3.0.100'
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
     - name: Build Program
