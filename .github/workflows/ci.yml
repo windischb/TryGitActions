@@ -12,11 +12,19 @@ jobs:
     
     steps:
     - uses: actions/checkout@master
-    - name: Setup .NET Core
+
+    - name: Setup .NET Core 3.0.100
       uses: actions/setup-dotnet@master
       with:
         dotnet-version: '3.0.100'
+
+    - name: Setup .NET Core 2.2.401
+      uses: actions/setup-dotnet@master
+      with:
+        dotnet-version: '2.2.401'
+        
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
+      
     - name: Build Program
       run: dotnet run --project build --target Compile
