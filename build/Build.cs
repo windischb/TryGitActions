@@ -91,6 +91,6 @@ class Build : NukeBuild
                 .ForEach(x => DotNetNuGetPush(s => s
                     .SetTargetPath(x)
                     .SetSource(NugetFeed)
-                    .SetApiKey(ApiKey)));
+                    .SetApiKey(NugetApiKey)));
         });
 }

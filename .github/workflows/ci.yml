@@ -19,4 +19,4 @@ jobs:
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
     - name: Build Program
-      run: dotnet run --project build --target Publish --ApiKey ${{secrets.NugetApiKey}} --NugetFeed ${{secrets.NugetFeed}}
+      run: dotnet run --project build --target Publish --NugetApiKey ${{secrets.NugetApiKey}} --NugetFeed ${{secrets.NugetFeed}}
