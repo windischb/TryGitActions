@@ -15,7 +15,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0
+        dotnet-version: '3.0.100'
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
     - name: Build Program
