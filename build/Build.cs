@@ -28,6 +28,12 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
+    [Parameter("ApiKey for the specified source.")]
+    string ApiKey { get; set; } = Environment.GetEnvironmentVariable("NugetApiKey");
+
+    [Parameter("NugetFeed.")]
+    string NugetFeed { get; set; } = Environment.GetEnvironmentVariable("NugetFeed");
+
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
     [GitVersion] readonly GitVersion GitVersion;
@@ -61,4 +67,30 @@ class Build : NukeBuild
                 .EnableNoRestore());
         });
 
+    Target Pack => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetPack(s => s
+                .SetWorkingDirectory(Solution.Directory)
+                .SetProject(Solution.GetProject("ConsoleWriter"))
+                .EnableNoBuild()
+                .SetConfiguration(Configuration)
+                .EnableIncludeSymbols()
+                .SetOutputDirectory(OutputDirectory)
+                .SetVersion(GitVersion.NuGetVersionV2));
+        });
+
+    Target Publish => _ => _
+        .DependsOn(Pack)
+        .Requires(() => ApiKey)
+        .Executes(() =>
+        {
+            GlobFiles(OutputDirectory, "*.nupkg").NotEmpty()
+                .Where(x => !x.EndsWith(".symbols.nupkg"))
+                .ForEach(x => DotNetNuGetPush(s => s
+                    .SetTargetPath(x)
+                    .SetSource(NugetFeed)
+                    .SetApiKey(ApiKey)));
+        });
 }
