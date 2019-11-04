@@ -18,5 +18,7 @@ jobs:
         dotnet-version: '3.0.100'
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
+    - name: Setup nuget config
+      run: sed 's/GITHUB_TOKEN/${{ secrets.GITHUB_TOKEN }}/g' .nuget.config > nuget.config
     - name: Build Program
-      run: dotnet run --project build --target Publish --ApiKey ${{secrets.GITHUB_TOKEN}} --NugetFeed https://nuget.pkg.github.com/windischb/index.json
+      run: dotnet run --project build --target Publish
