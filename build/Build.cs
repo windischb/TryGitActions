@@ -29,6 +29,9 @@ class Build : NukeBuild
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
 
+    [Parameter("NugetFeed.")]
+    string NugetFeed { get; set; } = Environment.GetEnvironmentVariable("NugetFeed");
+
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
     [GitVersion] readonly GitVersion GitVersion;
@@ -83,6 +86,7 @@ class Build : NukeBuild
             GlobFiles(OutputDirectory, "*.nupkg").NotEmpty()
                 .Where(x => !x.EndsWith(".symbols.nupkg"))
                 .ForEach(x => DotNetNuGetPush(s => s
-                    .SetTargetPath(x)));
+                    .SetTargetPath(x)
+                    .SetSource(NugetFeed)));
         });
 }
