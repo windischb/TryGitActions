@@ -12,9 +12,11 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.0.100'
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
-    - name: Add private GitHub registry to NuGet
-      run: mono nuget sources add -name "GPR" -Source https://nuget.pkg.github.com/windischb/index.json -Username windischb -Password ${{ secrets.GITHUB_TOKEN }}
     - name: Build Program
-      run: dotnet run --project build --target Publish --NugetFeed https://nuget.pkg.github.com/windischb/index.json
+      run: dotnet run --project build --target Publish --ApiKey ${{secrets.NugetApiKey}} --NugetFeed ${{secrets.NugetFeed}}

@@ -28,6 +28,8 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
+    [Parameter("ApiKey for the specified source.")]
+    string NugetApiKey { get; set; } = Environment.GetEnvironmentVariable("NugetApiKey");
 
     [Parameter("NugetFeed.")]
     string NugetFeed { get; set; } = Environment.GetEnvironmentVariable("NugetFeed");
@@ -81,12 +83,14 @@ class Build : NukeBuild
 
     Target Publish => _ => _
         .DependsOn(Pack)
+        .Requires(() => NugetApiKey)
         .Executes(() =>
         {
             GlobFiles(OutputDirectory, "*.nupkg").NotEmpty()
                 .Where(x => !x.EndsWith(".symbols.nupkg"))
                 .ForEach(x => DotNetNuGetPush(s => s
                     .SetTargetPath(x)
-                    .SetSource(NugetFeed)));
+                    .SetSource(NugetFeed)
+                    .SetApiKey(ApiKey)));
         });
 }
