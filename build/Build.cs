@@ -7,6 +7,7 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
+using Nuke.Common.Tools.NuGet;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
@@ -23,16 +24,19 @@ class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
-    public static int Main () => Execute<Build>(x => x.Compile);
+    public static int Main() => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("ApiKey for the specified source.")]
-    string NugetApiKey { get; set; } = Environment.GetEnvironmentVariable("NugetApiKey");
+    [Parameter("Username for the specified Nuget Source.")]
+    string NugetUsername { get; set; } = Environment.GetEnvironmentVariable("NugetUsername");
 
-    [Parameter("NugetFeed.")]
-    string NugetFeed { get; set; } = Environment.GetEnvironmentVariable("NugetFeed");
+    [Parameter("Password for the specified Nuget Source.")]
+    string NugetPassword { get; set; } = Environment.GetEnvironmentVariable("NugetPassword");
+
+    [Parameter("NugetSource")]
+    string NugetSource { get; set; } = Environment.GetEnvironmentVariable("NugetSource");
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
@@ -83,14 +87,15 @@ class Build : NukeBuild
 
     Target Publish => _ => _
         .DependsOn(Pack)
-        .Requires(() => NugetApiKey)
+        .Requires(() => NugetUsername)
         .Executes(() =>
         {
+
+            NuGetTasks.NuGetSourcesAdd(s => s.SetName("Github").SetSource(NugetSource).SetUserName(NugetUsername).SetPassword(NugetPassword));
+
             GlobFiles(OutputDirectory, "*.nupkg").NotEmpty()
                 .Where(x => !x.EndsWith(".symbols.nupkg"))
-                .ForEach(x => DotNetNuGetPush(s => s
-                    .SetTargetPath(x)
-                    .SetSource(NugetFeed)
-                    .SetApiKey(NugetApiKey)));
+                .ForEach(x => NuGetTasks.NuGetPush(s => s.SetSource("Github")));
+
         });
 }

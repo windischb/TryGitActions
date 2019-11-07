@@ -8,15 +8,11 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-2019
     
     steps:
     - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.0.100'
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
     - name: Build Program
-      run: dotnet run --project build --target Publish --NugetApiKey ${{secrets.NugetApiKey}} --NugetFeed ${{secrets.NugetFeed}}
+      run: dotnet run --project build --target Publish  --NugetSource "https://nuget.pkg.github.com/windischb/index.json" --NugetUsername "windischb" --NugetPassword ${{secrets.GITHUB_TOKEN}}
