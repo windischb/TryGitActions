@@ -95,7 +95,7 @@ class Build : NukeBuild
 
             GlobFiles(OutputDirectory, "*.nupkg").NotEmpty()
                 .Where(x => !x.EndsWith(".symbols.nupkg"))
-                .ForEach(x => NuGetTasks.NuGetPush(s => s.SetSource("Github")));
+                .ForEach(x => NuGetTasks.NuGetPush(s => s.SetSource("Github").SetTargetPath(x)));
 
         });
 }
