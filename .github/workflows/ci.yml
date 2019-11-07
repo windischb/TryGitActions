@@ -17,4 +17,4 @@ jobs:
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
     - name: Build Program
-      run: dotnet run --project build --target Publish  --NugetSource "https://nuget.pkg.github.com/windischb/index.json" --NugetUsername "windischb" --NugetPassword ${{secrets.GITHUB_TOKEN}}
+      run: dotnet run --project build --target Publish  --NugetSource "https://nuget.pkg.github.com/windischb/index.json" --NugetUsername "windischb" --NugetPassword ${{secrets.NugetApiKey}}
