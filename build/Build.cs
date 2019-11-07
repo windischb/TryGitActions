@@ -7,6 +7,7 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
+using Nuke.Common.Tools.NuGet;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
@@ -23,10 +24,19 @@ class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
-    public static int Main () => Execute<Build>(x => x.Compile);
+    public static int Main() => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+
+    [Parameter("Username for the specified Nuget Source.")]
+    string NugetUsername { get; set; } = Environment.GetEnvironmentVariable("NugetUsername");
+
+    [Parameter("Password for the specified Nuget Source.")]
+    string NugetPassword { get; set; } = Environment.GetEnvironmentVariable("NugetPassword");
+
+    [Parameter("NugetSource")]
+    string NugetSource { get; set; } = Environment.GetEnvironmentVariable("NugetSource");
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
@@ -44,7 +54,7 @@ class Build : NukeBuild
     Target Restore => _ => _
         .Executes(() =>
         {
-            DotNetRestore(s => s
+            DotNetRestore(_ => _
                 .SetProjectFile(Solution));
         });
 
@@ -52,13 +62,40 @@ class Build : NukeBuild
         .DependsOn(Restore)
         .Executes(() =>
         {
-            DotNetBuild(s => s
+            DotNetBuild(_ => _
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
-                .SetAssemblyVersion(GitVersion.GetNormalizedAssemblyVersion())
-                .SetFileVersion(GitVersion.GetNormalizedFileVersion())
+                .SetAssemblyVersion(GitVersion.AssemblySemVer)
+                .SetFileVersion(GitVersion.AssemblySemFileVer)
                 .SetInformationalVersion(GitVersion.InformationalVersion)
                 .EnableNoRestore());
         });
 
+    Target Pack => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetPack(s => s
+                .SetWorkingDirectory(Solution.Directory)
+                .SetProject(Solution.GetProject("ConsoleWriter"))
+                .EnableNoBuild()
+                .SetConfiguration(Configuration)
+                .EnableIncludeSymbols()
+                .SetOutputDirectory(OutputDirectory)
+                .SetVersion(GitVersion.NuGetVersionV2));
+        });
+
+    Target Publish => _ => _
+        .DependsOn(Pack)
+        .Requires(() => NugetUsername)
+        .Executes(() =>
+        {
+           
+            NuGetTasks.NuGetSourcesAdd(s => s.SetName("Github").SetSource(NugetSource).SetUserName(NugetUsername).SetPassword(NugetPassword));
+
+            GlobFiles(OutputDirectory, "*.nupkg").NotEmpty()
+                .Where(x => !x.EndsWith(".symbols.nupkg"))
+                .ForEach(x => NuGetTasks.NuGetPush(s => s.SetSource("Github").SetTargetPath(x)));
+
+        });
 }

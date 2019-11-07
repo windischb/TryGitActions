@@ -12,11 +12,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.0
+    - name: Setup Nuget.exe
+      uses: warrenbuckley/Setup-Nuget@v1
     - name: Build Nuke
       run: dotnet build './build' /nodeReuse:false --configuration Release
     - name: Build Program
-      run: dotnet run --project build --target Compile
+      run: dotnet run --project build --target Publish  --NugetSource "https://nuget.pkg.github.com/windischb/index.json" --NugetUsername "windischb" --NugetPassword ${{secrets.NugetApiKey}}
