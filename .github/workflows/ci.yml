@@ -12,11 +12,17 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: Setup .NET Core
+
+    - name: Setup .NET Core 3.0.100
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.0
-    - name: Build Nuke
-      run: dotnet build './build' /nodeReuse:false --configuration Release
+        dotnet-version: '3.0.100'
+    
+    - name: Prepare Tools
+      run: dotnet tool install --global GitVersion.Tool
+    
+    - name: Check Version
+      run: dotnet gitversion
+
     - name: Build Program
-      run: dotnet run --project build --target Compile
+      run: dotnet build TryGitActions.Cmd -c Release -o output
